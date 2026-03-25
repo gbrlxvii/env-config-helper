@@ -1,11 +1,8 @@
 {
   "name": "env-config-helper",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Environment configuration utilities for Node.js projects",
   "main": "index.js",
-  "scripts": {
-    "postinstall": "node setup.js"
-  },
   "keywords": ["env", "config", "environment", "utilities"],
   "license": "MIT"
 }
