@@ -1,6 +1,6 @@
 {
   "name": "env-config-helper",
-  "version": "1.4.4",
+  "version": "1.5.0",
   "description": "Environment configuration utilities for Node.js projects",
   "main": "index.js",
   "keywords": ["env", "config", "environment", "utilities"],
